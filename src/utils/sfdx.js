@@ -68,7 +68,7 @@ let deploy = function (deploy){
         var argsDeploy = ['force:source:deploy', '--wait', deploy.deployWaitTime, '--manifest', manifestTmp, '--targetusername', 'sfdc', '--json'];
 
         if(deploy.checkonly){
-            core.info("===== CHECH ONLY ====");
+            core.info("===== CHECK ONLY ====");
             argsDeploy.push('--checkonly');
         }
 
@@ -95,7 +95,8 @@ let deploy = function (deploy){
             argsDeploy.push(deploy.testlevel);
         }
 
-        argsDeploy.push('-g');
+        argsDeploy.push('--ignorewarnings');
+        argsDeploy.push('true');
 
         execCommand.run('sfdx', argsDeploy, sfdxRootFolder);
     }
