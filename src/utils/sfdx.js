@@ -35,9 +35,9 @@ let getApexTestClass = function(manifestpath, classesPath, defaultTestClass){
         if(defaultTestClass){
             testClasses.push(defaultTestClass);
         }
-        
+
     }
-    
+
     return testClasses.join(",");
 }
 
@@ -57,13 +57,14 @@ let deploy = function (deploy){
 
     var manifestsArray = deploy.manifestToDeploy.split(",");
     var sfdxRootFolder = deploy.sfdxRootFolder;
-    
+
     var manifestTmp;
     var testClassesTmp;
 
     for(var i = 0; i < manifestsArray.length; i++){
         manifestTmp = manifestsArray[i];
 
+        // var argsDeploy = ['force:source:deploy', '--wait', deploy.deployWaitTime, '--manifest', manifestTmp, '--targetusername', 'sfdc', '--json'];
         var argsDeploy = ['force:source:deploy', '--wait', deploy.deployWaitTime, '--manifest', manifestTmp, '--targetusername', 'sfdc', '--json'];
 
         if(deploy.checkonly){
@@ -73,16 +74,16 @@ let deploy = function (deploy){
 
         if(deploy.testlevel == "RunSpecifiedTests"){
             testClassesTmp = getApexTestClass(
-                sfdxRootFolder ? path.join(sfdxRootFolder, manifestTmp) : manifestTmp, 
+                sfdxRootFolder ? path.join(sfdxRootFolder, manifestTmp) : manifestTmp,
                 sfdxRootFolder ? path.join(sfdxRootFolder, deploy.defaultSourcePath, 'classes') : path.join(deploy.defaultSourcePath, 'classes'),
                 deploy.defaultTestClass);
 
             core.info("classes are : "  + testClassesTmp);
-            
+
             if(testClassesTmp){
                 argsDeploy.push("--testlevel");
                 argsDeploy.push(deploy.testlevel);
-    
+
                 argsDeploy.push("--runtests");
                 argsDeploy.push(testClassesTmp);
             }else{
@@ -93,6 +94,8 @@ let deploy = function (deploy){
             argsDeploy.push("--testlevel");
             argsDeploy.push(deploy.testlevel);
         }
+
+        argsDeploy.push('-g');
 
         execCommand.run('sfdx', argsDeploy, sfdxRootFolder);
     }
